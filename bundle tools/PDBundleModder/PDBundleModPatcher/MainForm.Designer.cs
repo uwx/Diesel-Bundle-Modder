@@ -41,7 +41,7 @@
             this.availiableModsSearch_textbox = new System.Windows.Forms.TextBox();
             this.filecontrol_button = new System.Windows.Forms.Button();
             this.availiableMods_listView = new System.Windows.Forms.ListView();
-            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
             this.AvailableModsLabel = new System.Windows.Forms.Label();
             this.BundleProgress = new System.Windows.Forms.ProgressBar();
             this.OpenModButton = new System.Windows.Forms.Button();
@@ -166,8 +166,8 @@
             this.lblReplacement = new System.Windows.Forms.Label();
             this.lblExtension = new System.Windows.Forms.Label();
             this.lstChangeExtension = new System.Windows.Forms.ListView();
-            this.clmOriginalExtension = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.clmNewExtension = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.clmOriginalExtension = new System.Windows.Forms.ColumnHeader();
+            this.clmNewExtension = new System.Windows.Forms.ColumnHeader();
             this.chkIgnoreExisting = new System.Windows.Forms.CheckBox();
             this.tabList = new System.Windows.Forms.TabPage();
             this.flpList = new System.Windows.Forms.FlowLayoutPanel();
@@ -224,9 +224,7 @@
             // 
             // tabs
             // 
-            this.tabs.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tabs.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.tabs.Controls.Add(this.ApplyTab);
             this.tabs.Controls.Add(this.CreateTab);
             this.tabs.Controls.Add(this.OptionsTab);
@@ -253,9 +251,7 @@
             // 
             // splitContainer1
             // 
-            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
             this.splitContainer1.IsSplitterFixed = true;
             this.splitContainer1.Location = new System.Drawing.Point(0, 0);
@@ -303,8 +299,7 @@
             // 
             // availiableModsSearch_textbox
             // 
-            this.availiableModsSearch_textbox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.availiableModsSearch_textbox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.availiableModsSearch_textbox.Location = new System.Drawing.Point(6, 16);
             this.availiableModsSearch_textbox.Name = "availiableModsSearch_textbox";
             this.availiableModsSearch_textbox.Size = new System.Drawing.Size(406, 20);
@@ -327,12 +322,9 @@
             // availiableMods_listView
             // 
             this.availiableMods_listView.Alignment = System.Windows.Forms.ListViewAlignment.Default;
-            this.availiableMods_listView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.availiableMods_listView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.availiableMods_listView.CheckBoxes = true;
-            this.availiableMods_listView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader1});
+            this.availiableMods_listView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { this.columnHeader1 });
             listViewGroup1.Header = "PDMod Mods";
             listViewGroup1.Name = "listViewLocalModsGroup";
             listViewGroup1.Tag = "LocalModsGroup";
@@ -343,11 +335,7 @@
             listViewGroup4.Header = "Downloadable Mods";
             listViewGroup4.Name = "listViewDownloadableModsGroup";
             listViewGroup4.Tag = "DownloadableModsGroup";
-            this.availiableMods_listView.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
-            listViewGroup1,
-            listViewGroup2,
-            listViewGroup3,
-            listViewGroup4});
+            this.availiableMods_listView.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] { listViewGroup1, listViewGroup2, listViewGroup3, listViewGroup4 });
             this.availiableMods_listView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.availiableMods_listView.HideSelection = false;
             this.availiableMods_listView.Location = new System.Drawing.Point(6, 42);
@@ -380,8 +368,7 @@
             // 
             // BundleProgress
             // 
-            this.BundleProgress.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.BundleProgress.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.BundleProgress.Location = new System.Drawing.Point(3, 428);
             this.BundleProgress.Name = "BundleProgress";
             this.BundleProgress.Size = new System.Drawing.Size(410, 15);
@@ -403,8 +390,7 @@
             // 
             // TotalProgress
             // 
-            this.TotalProgress.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.TotalProgress.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.TotalProgress.Location = new System.Drawing.Point(3, 445);
             this.TotalProgress.Name = "TotalProgress";
             this.TotalProgress.Size = new System.Drawing.Size(410, 15);
@@ -437,8 +423,7 @@
             // 
             // TotalProgressLabel
             // 
-            this.TotalProgressLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.TotalProgressLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.TotalProgressLabel.Location = new System.Drawing.Point(3, 410);
             this.TotalProgressLabel.Name = "TotalProgressLabel";
             this.TotalProgressLabel.Size = new System.Drawing.Size(410, 15);
@@ -511,9 +496,7 @@
             // 
             // DescriptionText
             // 
-            this.DescriptionText.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.DescriptionText.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.DescriptionText.Location = new System.Drawing.Point(3, 106);
             this.DescriptionText.Multiline = true;
             this.DescriptionText.Name = "DescriptionText";
@@ -579,8 +562,7 @@
             // 
             // selectedPackage
             // 
-            this.selectedPackage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.selectedPackage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.selectedPackage.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
             this.selectedPackage.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.CustomSource;
             this.selectedPackage.FormattingEnabled = true;
@@ -624,8 +606,7 @@
             // 
             this.fileReplacementType_ComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.fileReplacementType_ComboBox.FormattingEnabled = true;
-            this.fileReplacementType_ComboBox.Items.AddRange(new object[] {
-            "File Replacement"});
+            this.fileReplacementType_ComboBox.Items.AddRange(new object[] { "File Replacement" });
             this.fileReplacementType_ComboBox.Location = new System.Drawing.Point(101, 6);
             this.fileReplacementType_ComboBox.Name = "fileReplacementType_ComboBox";
             this.fileReplacementType_ComboBox.Size = new System.Drawing.Size(231, 21);
@@ -653,8 +634,7 @@
             // 
             // BundleFileName
             // 
-            this.BundleFileName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.BundleFileName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.BundleFileName.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
             this.BundleFileName.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.CustomSource;
             this.BundleFileName.Location = new System.Drawing.Point(101, 31);
@@ -688,8 +668,7 @@
             // 
             // ReplacementFileName
             // 
-            this.ReplacementFileName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.ReplacementFileName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.ReplacementFileName.Location = new System.Drawing.Point(101, 57);
             this.ReplacementFileName.Name = "ReplacementFileName";
             this.ReplacementFileName.ReadOnly = true;
@@ -750,9 +729,7 @@
             this.SpecificVersion.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.SpecificVersion.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.SpecificVersion.FormattingEnabled = true;
-            this.SpecificVersion.Items.AddRange(new object[] {
-            "1.15",
-            "1.16"});
+            this.SpecificVersion.Items.AddRange(new object[] { "1.15", "1.16" });
             this.SpecificVersion.Location = new System.Drawing.Point(164, 440);
             this.SpecificVersion.Name = "SpecificVersion";
             this.SpecificVersion.Size = new System.Drawing.Size(71, 21);
@@ -774,15 +751,10 @@
             this.AddedFilesView.AllowUserToAddRows = false;
             this.AddedFilesView.AllowUserToDeleteRows = false;
             this.AddedFilesView.AllowUserToResizeRows = false;
-            this.AddedFilesView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.AddedFilesView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.AddedFilesView.AutoGenerateColumns = false;
             this.AddedFilesView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.AddedFilesView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.dataGridViewTextBoxColumn1,
-            this.dataGridViewTextBoxColumn2,
-            this.dataGridViewCheckBoxColumn1});
+            this.AddedFilesView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] { this.dataGridViewTextBoxColumn1, this.dataGridViewTextBoxColumn2, this.dataGridViewCheckBoxColumn1 });
             this.AddedFilesView.DataSource = this.bundleRewriteItemBindingSource;
             this.AddedFilesView.Location = new System.Drawing.Point(6, 112);
             this.AddedFilesView.MinimumSize = new System.Drawing.Size(0, 85);
@@ -844,8 +816,7 @@
             // 
             // label10
             // 
-            this.label10.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label10.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.label10.AutoSize = true;
             this.label10.Location = new System.Drawing.Point(393, 331);
             this.label10.Margin = new System.Windows.Forms.Padding(3, 6, 3, 6);
@@ -856,8 +827,7 @@
             // 
             // ModAuthorEdit
             // 
-            this.ModAuthorEdit.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.ModAuthorEdit.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.ModAuthorEdit.Location = new System.Drawing.Point(461, 328);
             this.ModAuthorEdit.Name = "ModAuthorEdit";
             this.ModAuthorEdit.Size = new System.Drawing.Size(317, 20);
@@ -877,8 +847,7 @@
             // 
             // ModDescriptionEdit
             // 
-            this.ModDescriptionEdit.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.ModDescriptionEdit.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.ModDescriptionEdit.Location = new System.Drawing.Point(72, 353);
             this.ModDescriptionEdit.Multiline = true;
             this.ModDescriptionEdit.Name = "ModDescriptionEdit";
@@ -946,9 +915,7 @@
             // 
             // OptionsFlowLayout
             // 
-            this.OptionsFlowLayout.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.OptionsFlowLayout.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.OptionsFlowLayout.Controls.Add(this.GameAssetFolderLabel);
             this.OptionsFlowLayout.Controls.Add(this.AssetFolderEdit);
             this.OptionsFlowLayout.Controls.Add(this.AssetFolderButton);
@@ -990,8 +957,7 @@
             // 
             // AssetFolderEdit
             // 
-            this.AssetFolderEdit.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.AssetFolderEdit.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.AssetFolderEdit.Location = new System.Drawing.Point(111, 6);
             this.AssetFolderEdit.Margin = new System.Windows.Forms.Padding(0, 6, 3, 3);
             this.AssetFolderEdit.Name = "AssetFolderEdit";
@@ -1026,9 +992,7 @@
             // backupMethodComboBox
             // 
             this.backupMethodComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.backupMethodComboBox.Items.AddRange(new object[] {
-            "Bundles",
-            "Bundle Entries"});
+            this.backupMethodComboBox.Items.AddRange(new object[] { "Bundles", "Bundle Entries" });
             this.backupMethodComboBox.Location = new System.Drawing.Point(98, 32);
             this.backupMethodComboBox.Margin = new System.Windows.Forms.Padding(0);
             this.backupMethodComboBox.Name = "backupMethodComboBox";
@@ -1051,14 +1015,7 @@
             // 
             this.patchingBufferSize.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.OptionsFlowLayout.SetFlowBreak(this.patchingBufferSize, true);
-            this.patchingBufferSize.Items.AddRange(new object[] {
-            "16384",
-            "8192",
-            "4096",
-            "2048",
-            "1024",
-            "512",
-            "256"});
+            this.patchingBufferSize.Items.AddRange(new object[] { "16384", "8192", "4096", "2048", "1024", "512", "256" });
             this.patchingBufferSize.Location = new System.Drawing.Point(292, 32);
             this.patchingBufferSize.Margin = new System.Windows.Forms.Padding(0);
             this.patchingBufferSize.Name = "patchingBufferSize";
@@ -1125,10 +1082,7 @@
             // 
             this.ThemeSelection.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.ThemeSelection.FormattingEnabled = true;
-            this.ThemeSelection.Items.AddRange(new object[] {
-            "Default",
-            "Dark",
-            "LastBullet"});
+            this.ThemeSelection.Items.AddRange(new object[] { "Default", "Dark", "LastBullet" });
             this.ThemeSelection.Location = new System.Drawing.Point(49, 78);
             this.ThemeSelection.Name = "ThemeSelection";
             this.ThemeSelection.Size = new System.Drawing.Size(121, 21);
@@ -1165,8 +1119,7 @@
             // 
             // WriteConsole
             // 
-            this.WriteConsole.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.WriteConsole.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.WriteConsole.AutoSize = true;
             this.WriteConsole.BackColor = System.Drawing.Color.Transparent;
             this.WriteConsole.Location = new System.Drawing.Point(152, 105);
@@ -1264,9 +1217,7 @@
             // 
             // AboutLabel
             // 
-            this.AboutLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.AboutLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.AboutLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.AboutLabel.LinkArea = new System.Windows.Forms.LinkArea(134, 48);
             this.AboutLabel.Location = new System.Drawing.Point(265, 154);
@@ -1275,9 +1226,7 @@
             this.AboutLabel.Size = new System.Drawing.Size(511, 262);
             this.AboutLabel.TabIndex = 3;
             this.AboutLabel.TabStop = true;
-            this.AboutLabel.Text = "------\r\n\r\nDiesel Bundle Modder {0}\r\nBy I am not a spy..., Zwagoth and GREAT BIG B" +
-    "USHY BEARD\r\nCurrently maintained by Luffy\r\n\r\n------\r\nhttps://github.com/Luffyyy/" +
-    "Diesel-Bundle-Modder/\r\n------";
+            this.AboutLabel.Text = "------\r\n\r\nDiesel Bundle Modder {0}\r\nBy I am not a spy..., Zwagoth and GREAT BIG B" + "USHY BEARD\r\nCurrently maintained by Luffy\r\n\r\n------\r\nhttps://github.com/Luffyyy/" + "Diesel-Bundle-Modder/\r\n------";
             this.AboutLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.AboutLabel.UseCompatibleTextRendering = true;
             this.AboutLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.AboutLabelLinkClicked);
@@ -1296,9 +1245,7 @@
             // 
             // corruptedBundlesGroup
             // 
-            this.corruptedBundlesGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.corruptedBundlesGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.corruptedBundlesGroup.Controls.Add(this.attemptRepair_button);
             this.corruptedBundlesGroup.Controls.Add(this.corruptedShowOnlyCorrupted_checkbox);
             this.corruptedBundlesGroup.Controls.Add(this.corruptedBundlesReport_richTextBox);
@@ -1338,9 +1285,7 @@
             // 
             // corruptedBundlesReport_richTextBox
             // 
-            this.corruptedBundlesReport_richTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.corruptedBundlesReport_richTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.corruptedBundlesReport_richTextBox.Location = new System.Drawing.Point(6, 71);
             this.corruptedBundlesReport_richTextBox.Name = "corruptedBundlesReport_richTextBox";
             this.corruptedBundlesReport_richTextBox.ReadOnly = true;
@@ -1386,8 +1331,7 @@
             // 
             // hashConverterGroup
             // 
-            this.hashConverterGroup.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.hashConverterGroup.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.hashConverterGroup.Controls.Add(this.hashSwapHexEndiannessCheckbox);
             this.hashConverterGroup.Controls.Add(this.hashUseHexcheckBox);
             this.hashConverterGroup.Controls.Add(this.unHashButton);
@@ -1427,8 +1371,7 @@
             // 
             // unHashButton
             // 
-            this.unHashButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.unHashButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.unHashButton.Location = new System.Drawing.Point(332, 40);
             this.unHashButton.Name = "unHashButton";
             this.unHashButton.Size = new System.Drawing.Size(95, 23);
@@ -1457,8 +1400,7 @@
             // 
             // hashButton
             // 
-            this.hashButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.hashButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.hashButton.Location = new System.Drawing.Point(332, 14);
             this.hashButton.Name = "hashButton";
             this.hashButton.Size = new System.Drawing.Size(95, 23);
@@ -1507,10 +1449,7 @@
             this.reports_FormattingComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.reports_FormattingComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.reports_FormattingComboBox.FormattingEnabled = true;
-            this.reports_FormattingComboBox.Items.AddRange(new object[] {
-            "Regular Text",
-            "Steam Community",
-            "Reddit"});
+            this.reports_FormattingComboBox.Items.AddRange(new object[] { "Regular Text", "Steam Community", "Reddit" });
             this.reports_FormattingComboBox.Location = new System.Drawing.Point(534, 82);
             this.reports_FormattingComboBox.Name = "reports_FormattingComboBox";
             this.reports_FormattingComboBox.Size = new System.Drawing.Size(242, 21);
@@ -1602,9 +1541,7 @@
             // 
             // reports_ReportRichTextBox
             // 
-            this.reports_ReportRichTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.reports_ReportRichTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.reports_ReportRichTextBox.Location = new System.Drawing.Point(3, 3);
             this.reports_ReportRichTextBox.Name = "reports_ReportRichTextBox";
             this.reports_ReportRichTextBox.Size = new System.Drawing.Size(460, 465);
@@ -1640,8 +1577,7 @@
             // 
             // prgExtractSubProgress
             // 
-            this.prgExtractSubProgress.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.prgExtractSubProgress.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.prgExtractSubProgress.Location = new System.Drawing.Point(8, 426);
             this.prgExtractSubProgress.Name = "prgExtractSubProgress";
             this.prgExtractSubProgress.Size = new System.Drawing.Size(678, 13);
@@ -1663,7 +1599,7 @@
             // 
             this.lblSingleBundle.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.lblSingleBundle.AutoSize = true;
-            this.lblSingleBundle.Location = new System.Drawing.Point(3, 6);
+            this.lblSingleBundle.Location = new System.Drawing.Point(3, 85);
             this.lblSingleBundle.Name = "lblSingleBundle";
             this.lblSingleBundle.Size = new System.Drawing.Size(75, 13);
             this.lblSingleBundle.TabIndex = 37;
@@ -1674,8 +1610,9 @@
             this.txtSingleBundle.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.txtSingleBundle.Enabled = false;
             this.txtSingleBundle.Location = new System.Drawing.Point(84, 3);
+            this.txtSingleBundle.Multiline = true;
             this.txtSingleBundle.Name = "txtSingleBundle";
-            this.txtSingleBundle.Size = new System.Drawing.Size(197, 20);
+            this.txtSingleBundle.Size = new System.Drawing.Size(197, 178);
             this.txtSingleBundle.TabIndex = 38;
             // 
             // chkExtractAll
@@ -1684,7 +1621,7 @@
             this.chkExtractAll.AutoSize = true;
             this.chkExtractAll.Checked = true;
             this.chkExtractAll.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkExtractAll.Location = new System.Drawing.Point(287, 4);
+            this.chkExtractAll.Location = new System.Drawing.Point(287, 83);
             this.chkExtractAll.Name = "chkExtractAll";
             this.chkExtractAll.Size = new System.Drawing.Size(109, 17);
             this.chkExtractAll.TabIndex = 39;
@@ -1829,9 +1766,7 @@
             // 
             // lstChangeExtension
             // 
-            this.lstChangeExtension.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.clmOriginalExtension,
-            this.clmNewExtension});
+            this.lstChangeExtension.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { this.clmOriginalExtension, this.clmNewExtension });
             this.lstChangeExtension.FullRowSelect = true;
             this.lstChangeExtension.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.lstChangeExtension.HideSelection = false;
@@ -1909,9 +1844,7 @@
             this.cmbFormat.BackColor = System.Drawing.SystemColors.Window;
             this.cmbFormat.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbFormat.FormattingEnabled = true;
-            this.cmbFormat.Items.AddRange(new object[] {
-            "Default",
-            "CSV"});
+            this.cmbFormat.Items.AddRange(new object[] { "Default", "CSV" });
             this.cmbFormat.Location = new System.Drawing.Point(51, 3);
             this.cmbFormat.Name = "cmbFormat";
             this.cmbFormat.Size = new System.Drawing.Size(156, 21);
@@ -1980,9 +1913,7 @@
             // 
             // txtExtractLog
             // 
-            this.txtExtractLog.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtExtractLog.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.txtExtractLog.Location = new System.Drawing.Point(420, 221);
             this.txtExtractLog.MaxLength = 99999999;
             this.txtExtractLog.Multiline = true;
@@ -2004,8 +1935,7 @@
             // 
             // prgExtractMain
             // 
-            this.prgExtractMain.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.prgExtractMain.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.prgExtractMain.Location = new System.Drawing.Point(8, 445);
             this.prgExtractMain.Name = "prgExtractMain";
             this.prgExtractMain.Size = new System.Drawing.Size(678, 13);
@@ -2026,15 +1956,7 @@
             // 
             // modContextMenuStrip
             // 
-            this.modContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.markForInstallationToolStripMenuItem,
-            this.markForReinstallationToolStripMenuItem,
-            this.markForUninstallationToolStripMenuItem,
-            this.removeFromListToolStripMenuItem,
-            this.toolStripSeparator1,
-            this.showPDModFileToolStripMenuItem,
-            this.showInModoverrideFolderToolStripMenuItem,
-            this.showInBLTModsFolderToolStripMenuItem});
+            this.modContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { this.markForInstallationToolStripMenuItem, this.markForReinstallationToolStripMenuItem, this.markForUninstallationToolStripMenuItem, this.removeFromListToolStripMenuItem, this.toolStripSeparator1, this.showPDModFileToolStripMenuItem, this.showInModoverrideFolderToolStripMenuItem, this.showInBLTModsFolderToolStripMenuItem });
             this.modContextMenuStrip.Name = "contextMenuStrip1";
             this.modContextMenuStrip.Size = new System.Drawing.Size(227, 164);
             this.modContextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
@@ -2154,7 +2076,6 @@
             this.modContextMenuStrip.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.bundleModBindingSource)).EndInit();
             this.ResumeLayout(false);
-
         }
 
         #endregion

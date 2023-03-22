@@ -4213,7 +4213,7 @@ namespace PDBundleModPatcher
                     return;
                 }
 
-                if (!this.chkExtractAll.Checked && !File.Exists(Path.Combine(StaticStorage.settings.AssetsFolder, this.txtSingleBundle.Text + ".bundle")))
+                if (!this.chkExtractAll.Checked && !this.txtSingleBundle.Text.Contains("\n") && !File.Exists(Path.Combine(StaticStorage.settings.AssetsFolder, this.txtSingleBundle.Text + ".bundle")))
                 {
                     MessageBox.Show("Entered single bundle does not exist in your game directory!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
@@ -4243,9 +4243,16 @@ namespace PDBundleModPatcher
                 ExtractTimer.Interval = 100;
                 ExtractTimer.Tick += this.UpdateProgressTick;
                 ExtractTimer.Enabled = true;
-                StaticStorage.extract = new BundleExtraction(this.chkExtractAll.Checked ? null : this.txtSingleBundle.Text, this.tabExtractOptions.SelectedIndex == 1, this.clstSelectInformation.CheckedItems, (string)this.cmbFormat.SelectedItem);
-                bundleThread = new Thread(() => StaticStorage.extract.Start());
-                bundleThread.IsBackground = true;
+                StaticStorage.extract = new BundleExtraction(
+                    this.chkExtractAll.Checked ? null : this.txtSingleBundle.Text.Trim().Split('\n').Select(e => e.Trim()).Where(e => !string.IsNullOrWhiteSpace(e)).ToArray(),
+                    this.tabExtractOptions.SelectedIndex == 1,
+                    this.clstSelectInformation.CheckedItems,
+                    (string)this.cmbFormat.SelectedItem
+                );
+                bundleThread = new Thread(() => StaticStorage.extract.Start())
+                {
+                    IsBackground = true
+                };
                 bundleThread.Start();
                 ExtractTimer.Start();
             }
@@ -4317,7 +4324,7 @@ namespace PDBundleModPatcher
             this.prgExtractMain.Value = 0;
             this.prgExtractSubProgress.Value = 0;
             this.btnStartExtracting.Enabled = true;
-            StaticStorage.extract.log.Clear();
+            StaticStorage.extract.Log.Clear();
 
             this.SetExtractOptionsEnabled(true);
 
@@ -4330,12 +4337,12 @@ namespace PDBundleModPatcher
 
         private void UpdateProgressTick(object sender, EventArgs args)
         {
-            string[] logs = StaticStorage.extract.getLog();
-            this.prgExtractMain.Value = (int)(((float)StaticStorage.extract.current_bundle / StaticStorage.extract.total_bundle) * 100);
-            this.prgExtractSubProgress.Value = (int)(((float)StaticStorage.extract.current_bundle_progress / StaticStorage.extract.current_bundle_total_progress) * 100);
+            string[] logs = StaticStorage.extract.GetLog();
+            this.prgExtractMain.Value = (int)(((float)StaticStorage.extract.CurrentBundle / StaticStorage.extract.TotalBundle) * 100);
+            this.prgExtractSubProgress.Value = (int)(((float)StaticStorage.extract.CurrentBundleProgress / StaticStorage.extract.CurrentBundleTotalProgress) * 100);
             if (this.prgExtractMain.Style != ProgressBarStyle.Marquee)
             {
-                this.lblExtractProgress.Text = String.Format("{0} Entries: {1}/{2}, Bundle: {3}/{4}", StaticStorage.extract.current_bundle_name, StaticStorage.extract.current_bundle_progress, StaticStorage.extract.current_bundle_total_progress, StaticStorage.extract.current_bundle, StaticStorage.extract.total_bundle);
+                this.lblExtractProgress.Text = String.Format("{0} Entries: {1}/{2}, Bundle: {3}/{4}", StaticStorage.extract.CurrentBundleName, StaticStorage.extract.CurrentBundleProgress, StaticStorage.extract.CurrentBundleTotalProgress, StaticStorage.extract.CurrentBundle, StaticStorage.extract.TotalBundle);
             }
             if (logs.Length > logtracker)
             {

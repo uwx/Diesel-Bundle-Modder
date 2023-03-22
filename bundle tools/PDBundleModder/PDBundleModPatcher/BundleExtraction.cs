@@ -1,10 +1,13 @@
 ﻿using DieselEngineFormats.Bundle;
 using System;
+using System.Buffers;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace PDBundleModPatcher
@@ -17,7 +20,7 @@ namespace PDBundleModPatcher
 
         public override string ToString()
         {
-            return this.Title;
+            return Title;
         }
     }
 
@@ -49,98 +52,116 @@ namespace PDBundleModPatcher
 
     public class BundleExtraction
     {
-        public Queue<string> log = new Queue<string>();
-        public uint total_bundle { get; set; }
-        public uint current_bundle { get; set; }
-        public string current_bundle_name { get; set; }
-        public uint current_bundle_progress { get; set; }
-        public int current_bundle_total_progress { get; set; }
+        public readonly Queue<string> Log = new();
+        public uint TotalBundle { get; set; }
+        public uint CurrentBundle { get; set; }
+        public string CurrentBundleName { get; set; }
+        public uint CurrentBundleProgress { get; set; }
+        public int CurrentBundleTotalProgress { get; set; }
         public bool Finished { get; set; }
-        private bool list = false;
-        private string single_bundle;
-        private string extract_folder;
+        private readonly bool _list;
+        private readonly string[] _singleBundle;
+        internal readonly string ExtractFolder;
         public ListOutputter ListOutput;
-        private Dictionary<uint, string> cached_paths = new Dictionary<uint, string>();
-        private bool terminate = false;
+        private readonly ConcurrentDictionary<uint, string> _cachedPaths = new();
+        internal bool IsTerminated = false;
+        private static readonly object LogLock = new();
 
-        public BundleExtraction(string single_bundle, bool list, CheckedListBox.CheckedItemCollection list_info, string list_formatter)
+        public BundleExtraction(string[] singleBundle, bool list, CheckedListBox.CheckedItemCollection listInfo, string listFormatter)
         {
-            this.list = list;
-            this.single_bundle = single_bundle;
+            _list = list;
+            _singleBundle = singleBundle;
 
             if (String.IsNullOrWhiteSpace(StaticStorage.settings.CustomExtractPath))
             {
                 if (!Directory.Exists(Path.Combine(StaticStorage.settings.AssetsFolder, "extract")))
                     Directory.CreateDirectory(Path.Combine(StaticStorage.settings.AssetsFolder, "extract"));
 
-                extract_folder = Path.Combine(StaticStorage.settings.AssetsFolder, "extract");
+                ExtractFolder = Path.Combine(StaticStorage.settings.AssetsFolder, "extract");
             }
             else
             {
-                extract_folder = StaticStorage.settings.CustomExtractPath;
+                ExtractFolder = StaticStorage.settings.CustomExtractPath;
             }
 
             if (list)
             {
-                Type output_type;
-                switch (list_formatter)
+                Type outputType;
+                switch (listFormatter)
                 {
                     case "CSV":
-                        output_type = typeof(CSVListOutputter);
+                        outputType = typeof(CSVListOutputter);
                         break;
                     default:
-                        output_type = typeof(ListOutputter);
+                        outputType = typeof(ListOutputter);
                         break;
                 }
 
-                ListOutput = (ListOutputter)Activator.CreateInstance(output_type, !String.IsNullOrWhiteSpace(StaticStorage.settings.ListLogFile) ? StaticStorage.settings.ListLogFile : "./listlog.log", new ListOptions(list_info), this);
+                ListOutput = (ListOutputter)Activator.CreateInstance(outputType, !String.IsNullOrWhiteSpace(StaticStorage.settings.ListLogFile) ? StaticStorage.settings.ListLogFile : "./listlog.log", new ListOptions(listInfo), this);
             }
         }
 
         public void Start()
         {
-            List<string> files;
-            if (single_bundle != null)
-                files = new List<string> { Path.Combine(StaticStorage.settings.AssetsFolder, single_bundle) };
+            string[] files;
+            if (_singleBundle != null)
+                files = _singleBundle.Select(bundle => Path.Combine(StaticStorage.settings.AssetsFolder, bundle)).ToArray();
             else
-                files = Directory.EnumerateFiles(StaticStorage.settings.AssetsFolder, "*.bundle").ToList();
+                files = Directory.GetFiles(StaticStorage.settings.AssetsFolder, "*.bundle");
 
-            total_bundle = (uint)files.Count();
-
-            foreach (string file in files)
+            TotalBundle = (uint)files.Length;
+            
+            var cts = new CancellationTokenSource();
+            Parallel.ForEach(files, new ParallelOptions
             {
-                if (this.terminate)
-                    break;
+                CancellationToken = cts.Token,
+                MaxDegreeOfParallelism = Environment.ProcessorCount
+            }, file =>
+            {
+                if (IsTerminated)
+                {
+                    cts.Cancel();
+                    return;
+                }
 
                 if (file.EndsWith("_h.bundle"))
-                    continue;
+                    return;
 
-                PackageHeader bundle;
-                string bundle_path = file.Replace(".bundle", "");
-                string bundle_id = Path.GetFileName(bundle_path);
+                var bundlePath = file.Replace(".bundle", "");
+                var bundleId = Path.GetFileName(bundlePath);
 
-                bundle = new PackageHeader();
-                TextWriteLine("Loading bundle header " + bundle_id);
+                var bundle = new PackageHeader();
+                TextWriteLine("Loading bundle header " + bundleId);
                 if (!bundle.Load(file))
                 {
                     TextWriteLine("Failed to parse bundle header.");
-                    continue;
+                    return;
                 }
                 if (bundle.Entries.Count == 0)
-                    continue;
+                    return;
 
-                current_bundle_name = bundle_id;
-                current_bundle_progress = 0;
-                current_bundle_total_progress = list && this.ListOutput.ListOptions.EntryInfo.Count == 0 ? 1 : bundle.Entries.Count;
-                if (list)
-                    ListBundle(bundle, bundle_id);
+                var currentBundleName = CurrentBundleName = bundleId;
+                var currentBundleProgress = CurrentBundleProgress = 0;
+                var currentBundleTotalProgress = CurrentBundleTotalProgress = _list && ListOutput.ListOptions.EntryInfo.Count == 0 ? 1 : bundle.Entries.Count;
+
+                if (_list)
+                {
+                    ListBundle(bundle, bundleId);
+                }
                 else
                 {
-                    TextWriteLine("Extracting bundle: " + bundle_id);
-                    ExtractBundle(bundle, bundle_id);
+                    var thread = new BundleExtractorThread(this, currentBundleProgress, currentBundleTotalProgress);
+                    
+                    TextWriteLine("Extracting bundle: " + bundleId);
+                    thread.ExtractBundle(bundle, bundleId);
+                    if (thread.Log?.Count > 0)
+                        lock (LogLock)
+                            foreach (var s in thread.Log)
+                                Log.Enqueue(s);
                 }
-                current_bundle++;
-            }
+                CurrentBundle++;
+            });
+
             if (ListOutput != null)
             {
                 TextWriteLine("Writing List information to file");
@@ -150,123 +171,170 @@ namespace PDBundleModPatcher
             Finished = true;
         }
 
-        public string[] getLog()
+        public string[] GetLog()
         {
-            return log.ToArray();
+            return Log.ToArray();
         }
 
         public void TextWriteLine(string line, params object[] extras)
         {
-            log.Enqueue(StaticStorage.log.WriteLine(string.Format(line, extras), true));
+            lock (LogLock)
+            {
+                Log.Enqueue(StaticStorage.log.WriteLine(string.Format(line, extras), true));
+            }
         }
 
         public string GetFileName(PackageFileEntry be)
         {
-            string path;
-            if (!cached_paths.ContainsKey(be.ID))
+            var path = _cachedPaths.GetOrAdd(be.ID, id =>
             {
-                path = String.Format("unknown_{0:x}.bin", be.ID);
-                DatabaseEntry ne = StaticStorage.Index.EntryFromID(be.ID);
+                var path = $"unknown_{id:x}.bin";
+                var ne = StaticStorage.Index.EntryFromID(id);
                 if (ne != null)
                 {
-                    path = ne.Path.UnHashed ?? String.Format("{0:x}", ne.Path);
+                    path = ne.Path.UnHashed ?? $"{ne.Path:x}";
 
                     if (ne.Language != 0)
                     {
                         if (StaticStorage.Index.LanguageFromID(ne.Language) != null)
                         {
-                            string lang_ext = StaticStorage.Index.LanguageFromID(ne.Language).Name.UnHashed;
-                            path += String.Format(".{0}", (lang_ext != null ? lang_ext : ne.Language.ToString("x")));
+                            var langExt = StaticStorage.Index.LanguageFromID(ne.Language).Name.UnHashed;
+                            path += $".{langExt ?? ne.Language.ToString("x")}";
                         }
                         else
-                            path += String.Format(".{0:x}", ne.Language);
+                        {
+                            path += $".{ne.Language:x}";
+                        }
                     }
 
-                    string extension = ne.Extension.UnHashed ?? String.Format("{0:x}", ne.Extension);
+                    var extension = ne.Extension.UnHashed ?? $"{ne.Extension:x}";
 
-                    if (!list && StaticStorage.settings.ExtensionConversion.ContainsKey(extension))
-                        extension = StaticStorage.settings.ExtensionConversion[extension];
+                    if (!_list && StaticStorage.settings.ExtensionConversion.TryGetValue(extension, out var extensionReplacement))
+                        extension = extensionReplacement;
 
                     path += "." + extension;
                 }
-                cached_paths[be.ID] = path;
-            }
-            else
-                path = cached_paths[be.ID];
+
+                return path;
+            });
 
             return path;
         }
 
-        public void ListBundle(PackageHeader bundle, string bundle_id)
+        public void ListBundle(PackageHeader bundle, string bundleId)
         {
-            this.ListOutput.WriteBundle(bundle, bundle_id);
+            ListOutput.WriteBundle(bundle, bundleId);
 
-            if (this.ListOutput.ListOptions.EntryInfo.Count > 0)
+            if (ListOutput.ListOptions.EntryInfo.Count > 0)
             {
-                for (; current_bundle_progress < current_bundle_total_progress; current_bundle_progress++)
+                for (; CurrentBundleProgress < CurrentBundleTotalProgress; CurrentBundleProgress++)
                 {
-                    PackageFileEntry be = bundle.Entries[(int)current_bundle_progress];
-                    if (this.terminate)
+                    PackageFileEntry be = bundle.Entries[(int)CurrentBundleProgress];
+                    if (IsTerminated)
                         break;
 
-                    this.ListOutput.WriteEntry(be);
+                    ListOutput.WriteEntry(be);
                 }
             }
             else
-                current_bundle_progress++;
-        }
-
-        public void ExtractBundle(PackageHeader bundle, string bundle_id)
-        {
-            string bundle_file = Path.Combine(StaticStorage.settings.AssetsFolder, bundle_id + ".bundle");
-            if (!File.Exists(bundle_file))
-            {
-                string error_message = "Bundle file does not exist.";
-                MessageBox.Show(error_message);
-                TextWriteLine(error_message);
-                return;
-            }
-            using (FileStream fs = new FileStream(bundle_file, FileMode.Open, FileAccess.Read))
-            {
-                using (BinaryReader br = new BinaryReader(fs))
-                {
-                    for (; current_bundle_progress < current_bundle_total_progress; current_bundle_progress++)
-                    {
-                        PackageFileEntry be = bundle.Entries[(int)current_bundle_progress];
-                        if (this.terminate)
-                            break;
-
-                        string path = Path.Combine(extract_folder, this.GetFileName(be));
-
-                        if (StaticStorage.settings.IgnoreExistingFiles && File.Exists(path))
-                            continue;
-
-                        string folder = Path.GetDirectoryName(path);
-
-                        if (!String.IsNullOrWhiteSpace(folder) && !Directory.Exists(folder))
-                            Directory.CreateDirectory(folder);
-
-                        if (be.Length == 0 && File.Exists(path))
-                            continue;
-
-                        fs.Position = be.Address;
-                        byte[] data;
-                        if (be.Length == -1)
-                            data = br.ReadBytes((int)(fs.Length - fs.Position));
-                        else
-                            data = br.ReadBytes((int)be.Length);
-
-                        File.WriteAllBytes(path, data);
-                    }
-                }
-            }
+                CurrentBundleProgress++;
         }
 
         public void Terminate()
         {
-            this.terminate = true;
+            IsTerminated = true;
         }
 
+    }
+
+    public class BundleExtractorThread
+    {
+        private static readonly ArrayPool<byte> BufferPool = ArrayPool<byte>.Create(1024*1024, 50);
+
+        public Queue<string> Log;
+
+        private readonly BundleExtraction _parent;
+        
+        private readonly uint _currentBundleProgress;
+        private readonly int _currentBundleTotalProgress;
+
+        public BundleExtractorThread(BundleExtraction parent, uint currentBundleProgress, int currentBundleTotalProgress)
+        {
+            _parent = parent;
+            _currentBundleProgress = currentBundleProgress;
+            _currentBundleTotalProgress = currentBundleTotalProgress;
+        }
+
+        public void TextWriteLine(string line, params object[] extras)
+        {
+            (Log ??= new Queue<string>()).Enqueue(StaticStorage.log.WriteLine(string.Format(line, extras), true));
+        }
+
+        public void ExtractBundle(PackageHeader bundle, string bundleId)
+        {
+            var bundleFile = Path.Combine(StaticStorage.settings.AssetsFolder, bundleId + ".bundle");
+            if (!File.Exists(bundleFile))
+            {
+                const string errorMessage = "Bundle file does not exist.";
+                MessageBox.Show(errorMessage);
+                TextWriteLine(errorMessage);
+                return;
+            }
+
+            Parallel.For(_currentBundleProgress, _currentBundleTotalProgress, currentBundleProgress =>
+            {
+                var be = bundle.Entries[(int)currentBundleProgress];
+                //if (self._parent.IsTerminated)
+                //    break;
+
+                var path = Path.Combine(_parent.ExtractFolder, _parent.GetFileName(be));
+
+                if (StaticStorage.settings.IgnoreExistingFiles && File.Exists(path))
+                    return;
+
+                var folder = Path.GetDirectoryName(path);
+
+                if (!string.IsNullOrWhiteSpace(folder) && !Directory.Exists(folder))
+                    Directory.CreateDirectory(folder);
+
+                if (be.Length == 0 && File.Exists(path))
+                    return;
+
+                FileStream outStream;
+
+                try
+                {
+                    outStream = File.OpenWrite(path);
+                }
+                catch (IOException)
+                {
+                    return;
+                }
+
+                using (outStream)
+                {
+                    using var fs = new FileStream(bundleFile, FileMode.Open, FileAccess.Read);
+                    fs.Position = be.Address;
+
+                    if (be.Length == -1)
+                        CopyStream(fs, outStream, (int)(fs.Length - fs.Position));
+                    else
+                        CopyStream(fs, outStream, be.Length);
+                }
+            });
+        }
+        
+        private static void CopyStream(Stream input, Stream output, int bytes)
+        {
+            const int bufferLen = 1024*1024;
+            var buffer = BufferPool.Rent(bufferLen);
+            int read;
+            while (bytes > 0 && (read = input.Read(buffer, 0, Math.Min(bufferLen, bytes))) > 0)
+            {
+                output.Write(buffer, 0, read);
+                bytes -= read;
+            }
+        }
     }
 
     public class ListOutputter
@@ -281,20 +349,20 @@ namespace PDBundleModPatcher
 
         public ListOutputter(string output_file, ListOptions options, dynamic parent)
         {
-            this.OutputFile = output_file;
+            OutputFile = output_file;
             ListOptions = options;
             Parent = parent;
-            this.WriteTitle();
+            WriteTitle();
         }
 
         public virtual void WriteTitle()
         {
-            for (int i = 0; i < this.ListOptions.EntryInfo.Count; i++)
+            for (int i = 0; i < ListOptions.EntryInfo.Count; i++)
             {
-                ListEntryOption opt = this.ListOptions.EntryInfo[i];
-                this.Output.Append((i == 0 ? "" : " - ") + opt.Title);
+                ListEntryOption opt = ListOptions.EntryInfo[i];
+                Output.Append((i == 0 ? "" : " - ") + opt.Title);
             }
-            this.Output.AppendLine();
+            Output.AppendLine();
         }
 
         public virtual void WriteEntry(PackageFileEntry entry)
@@ -302,13 +370,13 @@ namespace PDBundleModPatcher
             if (ListOptions.EntryInfo.Count == 0)
                 return;
 
-            this.Output.Append("\t");
-            for (int i = 0; i < this.ListOptions.EntryInfo.Count; i++)
+            Output.Append("\t");
+            for (int i = 0; i < ListOptions.EntryInfo.Count; i++)
             {
-                ListEntryOption opt = this.ListOptions.EntryInfo[i];
-                this.Output.Append((i == 0 ? "" : " - ") + opt.StringFunc(Parent, entry));
+                ListEntryOption opt = ListOptions.EntryInfo[i];
+                Output.Append((i == 0 ? "" : " - ") + opt.StringFunc(Parent, entry));
             }
-            this.Output.AppendLine();
+            Output.AppendLine();
         }
 
         public virtual void WriteBundle(PackageHeader header, string bundle_id)
@@ -316,18 +384,18 @@ namespace PDBundleModPatcher
             if (ListOptions.BundleInfo.Count == 0)
                 return;
 
-            this.Output.AppendLine();
-            for (int i = 0; i < this.ListOptions.BundleInfo.Count; i++)
+            Output.AppendLine();
+            for (int i = 0; i < ListOptions.BundleInfo.Count; i++)
             {
-                ListBundleOption opt = this.ListOptions.BundleInfo[i];
-                this.Output.Append((i == 0 ? "" : " - ") + opt.StringFunc(Parent, header, bundle_id));
+                ListBundleOption opt = ListOptions.BundleInfo[i];
+                Output.Append((i == 0 ? "" : " - ") + opt.StringFunc(Parent, header, bundle_id));
             }
-            this.Output.AppendLine((this.ListOptions.EntryInfo.Count > 0 ? ":" : ""));
+            Output.AppendLine((ListOptions.EntryInfo.Count > 0 ? ":" : ""));
         }
 
         public void Write()
         {
-            File.WriteAllText(this.OutputFile, Output.ToString());
+            File.WriteAllText(OutputFile, Output.ToString());
         }
     }
 
@@ -341,18 +409,18 @@ namespace PDBundleModPatcher
         {
             int i = 0;
 
-            foreach (ListEntryOption opt in this.ListOptions.BundleInfo)
+            foreach (ListEntryOption opt in ListOptions.BundleInfo)
             {
-                this.Output.Append((i == 0 ? "" : ",") + "\"" + opt.Title + "\"");
+                Output.Append((i == 0 ? "" : ",") + "\"" + opt.Title + "\"");
                 i++;
             }
 
-            foreach (ListEntryOption opt in this.ListOptions.EntryInfo)
+            foreach (ListEntryOption opt in ListOptions.EntryInfo)
             {
-                this.Output.Append((i == 0 ? "" : ",") + "\"" + opt.Title + "\"");
+                Output.Append((i == 0 ? "" : ",") + "\"" + opt.Title + "\"");
                 i++;
             }
-            this.Output.AppendLine();
+            Output.AppendLine();
         }
 
         public override void WriteBundle(PackageHeader header, string bundle_id)
@@ -360,13 +428,13 @@ namespace PDBundleModPatcher
             if (ListOptions.BundleInfo.Count == 0)
                 return;
 
-            this.Output.AppendLine();
-            for (int i = 0; i < this.ListOptions.BundleInfo.Count; i++)
+            Output.AppendLine();
+            for (int i = 0; i < ListOptions.BundleInfo.Count; i++)
             {
-                ListBundleOption opt = this.ListOptions.BundleInfo[i];
-                this.Output.Append((i == 0 ? "" : ",") + "\"" + opt.StringFunc(Parent, header, bundle_id) + "\"");
+                ListBundleOption opt = ListOptions.BundleInfo[i];
+                Output.Append((i == 0 ? "" : ",") + "\"" + opt.StringFunc(Parent, header, bundle_id) + "\"");
             }
-            this.WriteEmptyBundleColumns = false;
+            WriteEmptyBundleColumns = false;
         }
 
         public override void WriteEntry(PackageFileEntry entry)
@@ -374,21 +442,21 @@ namespace PDBundleModPatcher
             if (ListOptions.EntryInfo.Count == 0)
                 return;
 
-            if (this.WriteEmptyBundleColumns && this.ListOptions.BundleInfo.Count > 0)
+            if (WriteEmptyBundleColumns && ListOptions.BundleInfo.Count > 0)
             {
-                for (int i = 0; i < this.ListOptions.BundleInfo.Count - 1; i++)
+                for (int i = 0; i < ListOptions.BundleInfo.Count - 1; i++)
                 {
-                    this.Output.Append(",");
+                    Output.Append(",");
                 }
             }
 
-            for (int i = 0; i < this.ListOptions.EntryInfo.Count; i++)
+            for (int i = 0; i < ListOptions.EntryInfo.Count; i++)
             {
-                ListEntryOption opt = this.ListOptions.EntryInfo[i];
-                this.Output.Append((i == 0 && this.ListOptions.BundleInfo.Count == 0 ? "" : ",") + "\"" + opt.StringFunc(Parent, entry) + "\"");
+                ListEntryOption opt = ListOptions.EntryInfo[i];
+                Output.Append((i == 0 && ListOptions.BundleInfo.Count == 0 ? "" : ",") + "\"" + opt.StringFunc(Parent, entry) + "\"");
             }
-            this.Output.AppendLine();
-            this.WriteEmptyBundleColumns = true;
+            Output.AppendLine();
+            WriteEmptyBundleColumns = true;
         }
     }
 }
